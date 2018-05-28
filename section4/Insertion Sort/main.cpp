@@ -10,6 +10,10 @@ void printArray(int A[], int length) {
     cout << endl;
 }
 
+void generateArray(int A[], int length) {
+// WRITE YOUR CODE HERE
+}
+
 void insertionSort(int A[], int length) {
     for (int j = 1; j < length; j++) {
         int key = A[j];
@@ -23,6 +27,12 @@ void insertionSort(int A[], int length) {
 }
 
 int main() {
+// Homework
+// set n = 10000;
+// generate n random numbers and fill out your
+// array
+// hint: use cstdlib header,
+// you may need to use srand and random functions
     int n = 6;
     int array[] = {65, 32, 114, 52, 19, 80};
     //int n = sizeof(array) / sizeof(array[0]);
