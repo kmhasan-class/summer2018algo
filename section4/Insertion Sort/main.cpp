@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 using namespace std;
 
 void printArray(int A[], int length) {
@@ -11,7 +13,11 @@ void printArray(int A[], int length) {
 }
 
 void generateArray(int A[], int length) {
-// WRITE YOUR CODE HERE
+    srand(time(NULL));
+    for (int i = 0; i < length; i++) {
+        int number = random() % 100;
+        A[i] = number;
+    }
 }
 
 void insertionSort(int A[], int length) {
@@ -27,24 +33,37 @@ void insertionSort(int A[], int length) {
 }
 
 int main() {
-// Homework
-// set n = 10000;
-// generate n random numbers and fill out your
-// array
-// hint: use cstdlib header,
-// you may need to use srand and random functions
-    int n = 6;
-    int array[] = {65, 32, 114, 52, 19, 80};
+// H/W #1:
+// Calculate a table to see how much time
+// it takes to do insertion sort for
+// n = 1, 10, 100 ..., up to 10 million numbers
+// try to run the program multiple times
+// to find out the time taken and then calculate
+// the average time for the given n value
+
+// H/W #2:
+// implement bubble sort and run the same
+// experiments
+    int n = 1000000;
+    int *array = new int[n]; //dynamic allocation
+    generateArray(array, n);
+
     //int n = sizeof(array) / sizeof(array[0]);
 
-    cout << "Before sorting: ";
-    printArray(array, n);
+//    cout << "Before sorting: ";
+//    printArray(array, n);
 
     // insertion sort
+    clock_t start = clock();
     insertionSort(array, n);
+    clock_t stop = clock();
 
-    cout << "After sorting:  ";
-    printArray(array, n);
+    long timeDifference = stop - start;
+    cout << "n = " << n << endl;
+    double timeTaken = (double) timeDifference / CLOCKS_PER_SEC;
+    cout << "time taken " << timeTaken << endl;
+//    cout << "After sorting:  ";
+//    printArray(array, n);
 
     return 0;
 }
