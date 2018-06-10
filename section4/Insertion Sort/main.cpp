@@ -20,6 +20,20 @@ void generateArray(int A[], int length) {
     }
 }
 
+void selectionSort(int A[], int length) {
+    for (int j = 0; j < length - 1; j++) {
+        int minIndex = j;
+        for (int i = j + 1; i < length; i++)
+            if (A[i] < A[minIndex])
+                minIndex = i;
+        if (minIndex != j) {
+            int temp = A[j];
+            A[j] = A[minIndex];
+            A[minIndex] = temp;
+        }
+    }
+}
+
 void insertionSort(int A[], int length) {
     for (int j = 1; j < length; j++) {
         int key = A[j];
@@ -44,26 +58,55 @@ int main() {
 // H/W #2:
 // implement bubble sort and run the same
 // experiments
-    int n = 1000000;
-    int *array = new int[n]; //dynamic allocation
-    generateArray(array, n);
+    int n = 10000;
+    int *array1 = new int[n]; //dynamic allocation
+    generateArray(array1, n);
+    int *array2 = new int[n];
+    insertionSort(array1, n);
+//    for (int i = 0; i < n; i++)
+//        array2[i] = array1[i];
+    for (int i = 0; i < n; i++)
+        array2[n - 1 - i] = array1[i];
+    for (int i = 0; i < n; i++)
+        array1[i] = array2[i];
 
     //int n = sizeof(array) / sizeof(array[0]);
 
 //    cout << "Before sorting: ";
-//    printArray(array, n);
+    //printArray(array1, n);
 
-    // insertion sort
+    // Selection sort
     clock_t start = clock();
-    insertionSort(array, n);
+    selectionSort(array1, n);
     clock_t stop = clock();
 
+    //cout << "After sorting:  ";
+    //printArray(array1, n);
+
     long timeDifference = stop - start;
+    cout << "Selection sort" << endl;
     cout << "n = " << n << endl;
     double timeTaken = (double) timeDifference / CLOCKS_PER_SEC;
     cout << "time taken " << timeTaken << endl;
-//    cout << "After sorting:  ";
-//    printArray(array, n);
+
+    cout << endl;
+
+    //cout << "Before sorting: ";
+    //printArray(array2, n);
+
+    // Insertion sort
+    start = clock();
+    insertionSort(array2, n);
+    stop = clock();
+
+    //cout << "After sorting:  ";
+    //printArray(array2, n);
+
+    timeDifference = stop - start;
+    cout << "Insertion sort" << endl;
+    cout << "n = " << n << endl;
+    timeTaken = (double) timeDifference / CLOCKS_PER_SEC;
+    cout << "time taken " << timeTaken << endl;
 
     return 0;
 }
