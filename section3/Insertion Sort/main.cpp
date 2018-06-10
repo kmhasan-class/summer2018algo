@@ -45,6 +45,15 @@ void insertionSort(int A[], int length) {
     }
 }
 
+bool isAscending(int A[], int n) {
+    // A[] = {3, 5, 5, 7, 8, 12, 9, 10}
+    // A[] = {3, 5, 5, 7, 8, 9, 10, 12}
+    for (int i = 0; i < n - 1; i++)
+        if (A[i] > A[i + 1])
+            return false;
+    return true;
+}
+
 int main() {
 /*
 H/W #1: Try this program with different values of
@@ -55,25 +64,33 @@ Write them down on a table (on spreadsheet) or on paper
 H.W #2: Implement bubble sort and run the same
 experiments and tabulate your findings
 */
-    int n = 100000;
+    int n = 10;
 //    int array[n]; // static allocation
     int *array1 = new int[n]; // dynamic allocation
     generateArray(array1, n);
+
+    insertionSort(array1, n);
+    for (int i = 0; i < n / 2; i++) {
+        int j = n - i - 1;
+        int temp = array1[i];
+        array1[i] = array1[j];
+        array1[j] = temp;
+    }
 
     int *array2 = new int[n];
     for (int i = 0; i < n; i++)
         array2[i] = array1[i];
 
-//    cout << "Before sorting: ";
-//    printArray(array, n);
+    cout << "Before sorting: ";
+    printArray(array1, n);
 
     // Selection Sort
     clock_t start = clock();
     selectionSort(array1, n);
     clock_t stop = clock();
 
-//    cout << "After sorting:  ";
-//    printArray(array, n);
+    cout << "After sorting:  ";
+    printArray(array1, n);
 
     long clockTicks = stop - start;
     cout << "Algorithm: Selection Sort" << endl;
@@ -82,19 +99,24 @@ experiments and tabulate your findings
     cout << "clocks per sec = " << CLOCKS_PER_SEC << endl;
     double timeTaken = (double) clockTicks / CLOCKS_PER_SEC;
     cout << "time taken " << timeTaken << " seconds " << endl;
+    if (isAscending(array1, n)) {
+        cout << "Array elements are in ascending order" << endl;
+    } else {
+        cerr << "Array elements are NOT in ascending order" << endl;
+    }
 
-//    cout << "Before sorting: ";
-//    printArray(array, n);
+    cout << endl;
+
+    cout << "Before sorting: ";
+    printArray(array2, n);
 
     // Insertion Sort
     start = clock();
-    insertionSort(array1, n);
+    insertionSort(array2, n);
     stop = clock();
 
-//    cout << "After sorting:  ";
-//    printArray(array, n);
-
-    cout << endl;
+    cout << "After sorting:  ";
+    printArray(array2, n);
 
     clockTicks = stop - start;
     cout << "Algorithm: Insertion Sort" << endl;
@@ -103,5 +125,11 @@ experiments and tabulate your findings
     cout << "clocks per sec = " << CLOCKS_PER_SEC << endl;
     timeTaken = (double) clockTicks / CLOCKS_PER_SEC;
     cout << "time taken " << timeTaken << " seconds " << endl;
+
+    if (isAscending(array2, n)) {
+        cout << "Array elements are in ascending order" << endl;
+    } else {
+        cerr << "Array elements are NOT in ascending order" << endl;
+    }
 
 }
