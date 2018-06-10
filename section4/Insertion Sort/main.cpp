@@ -46,6 +46,16 @@ void insertionSort(int A[], int length) {
     }
 }
 
+bool isAscending(int A[], int n) {
+    // WRITE YOUR CODE HERE
+    // 2, 3, 5, 6, 7, 7, 34, 21
+    // 0  1  2  3  4  5   6   7
+    for (int i = 0; i < n - 1; i++)
+        if (A[i] > A[i + 1])
+            return false;
+    return true;
+}
+
 int main() {
 // H/W #1:
 // Calculate a table to see how much time
@@ -58,7 +68,7 @@ int main() {
 // H/W #2:
 // implement bubble sort and run the same
 // experiments
-    int n = 10000;
+    int n = 10;
     int *array1 = new int[n]; //dynamic allocation
     generateArray(array1, n);
     int *array2 = new int[n];
@@ -91,22 +101,25 @@ int main() {
 
     cout << endl;
 
-    //cout << "Before sorting: ";
-    //printArray(array2, n);
+    cout << "Before sorting: ";
+    printArray(array2, n);
 
     // Insertion sort
     start = clock();
     insertionSort(array2, n);
     stop = clock();
 
-    //cout << "After sorting:  ";
-    //printArray(array2, n);
+    cout << "After sorting:  ";
+    printArray(array2, n);
 
     timeDifference = stop - start;
     cout << "Insertion sort" << endl;
     cout << "n = " << n << endl;
     timeTaken = (double) timeDifference / CLOCKS_PER_SEC;
     cout << "time taken " << timeTaken << endl;
+    if (isAscending(array2, n))
+        cout << "The elements are in ascending order" << endl;
+    else cout << "The elements are NOT in ascending order" << endl;
 
     return 0;
 }
