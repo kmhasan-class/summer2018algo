@@ -68,15 +68,15 @@ int main() {
 // H/W #2:
 // implement bubble sort and run the same
 // experiments
-    int n = 10;
+    int n = 1000000;
     int *array1 = new int[n]; //dynamic allocation
     generateArray(array1, n);
     int *array2 = new int[n];
     insertionSort(array1, n);
-//    for (int i = 0; i < n; i++)
-//        array2[i] = array1[i];
     for (int i = 0; i < n; i++)
-        array2[n - 1 - i] = array1[i];
+        array2[i] = array1[i];
+//    for (int i = 0; i < n; i++)
+        //array2[n - 1 - i] = array1[i];
     for (int i = 0; i < n; i++)
         array1[i] = array2[i];
 
@@ -87,7 +87,7 @@ int main() {
 
     // Selection sort
     clock_t start = clock();
-    selectionSort(array1, n);
+    //selectionSort(array1, n);
     clock_t stop = clock();
 
     //cout << "After sorting:  ";
@@ -101,16 +101,16 @@ int main() {
 
     cout << endl;
 
-    cout << "Before sorting: ";
-    printArray(array2, n);
+//    cout << "Before sorting: ";
+//    printArray(array2, n);
 
     // Insertion sort
     start = clock();
     insertionSort(array2, n);
     stop = clock();
 
-    cout << "After sorting:  ";
-    printArray(array2, n);
+//    cout << "After sorting:  ";
+    //printArray(array2, n);
 
     timeDifference = stop - start;
     cout << "Insertion sort" << endl;
