@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1529822948 source:/home/kmhasan/CBProjects/summer2018algo/section4/Searching/main.cpp
+	<iostream>
+	<cstdlib>
+
