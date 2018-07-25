@@ -3,6 +3,8 @@
 #include <ctime>
 using namespace std;
 
+const int INF = 1000000;
+
 void printArray(int A[], int length) {
     for (int i = 0; i < length; i++) {
         if (i != 0)
@@ -46,6 +48,45 @@ void insertionSort(int A[], int length) {
     }
 }
 
+void merge(int A[], int p, int q, int r) {
+    int n1 = q - p + 1;
+    int n2 = r - q;
+
+    // static declaration
+    int L[n1 + 1];
+    int R[n2 + 1];
+
+    for (int i = 0; i < n1; i++)
+        L[i] = A[p + i];
+
+    for (int j = 0; j < n2; j++)
+        R[j] = A[q + j + 1];
+
+    L[n1] = INF;
+    R[n2] = INF;
+
+    int i = 0;
+    int j = 0;
+
+    for (int k = p; k <= r; k++)
+        if (L[i] <= R[j]) {
+            A[k] = L[i];
+            i = i + 1;
+        } else {
+            A[k] = R[j];
+            j = j + 1;
+        }
+}
+
+void mergeSort(int A[], int p, int r) {
+    if (p < r) {
+        //printArray(A, p, r);
+        int q = (p + r) / 2;
+        mergeSort(A, p, q);
+        mergeSort(A, q + 1, r);
+        merge(A, p, q, r);
+    }
+}
 bool isAscending(int A[], int n) {
     // WRITE YOUR CODE HERE
     // 2, 3, 5, 6, 7, 7, 34, 21
@@ -68,17 +109,19 @@ int main() {
 // H/W #2:
 // implement bubble sort and run the same
 // experiments
-    int n = 1000000;
+    int n = 100000;
     int *array1 = new int[n]; //dynamic allocation
     generateArray(array1, n);
     int *array2 = new int[n];
-    insertionSort(array1, n);
+    int *array3 = new int[n];
     for (int i = 0; i < n; i++)
         array2[i] = array1[i];
 //    for (int i = 0; i < n; i++)
         //array2[n - 1 - i] = array1[i];
-    for (int i = 0; i < n; i++)
-        array1[i] = array2[i];
+    for (int i = 0; i < n; i++) {
+        array2[i] = array1[i];
+        array3[i] = array1[i];
+    }
 
     //int n = sizeof(array) / sizeof(array[0]);
 
@@ -87,7 +130,7 @@ int main() {
 
     // Selection sort
     clock_t start = clock();
-    //selectionSort(array1, n);
+    selectionSort(array1, n);
     clock_t stop = clock();
 
     //cout << "After sorting:  ";
@@ -117,9 +160,24 @@ int main() {
     cout << "n = " << n << endl;
     timeTaken = (double) timeDifference / CLOCKS_PER_SEC;
     cout << "time taken " << timeTaken << endl;
-    if (isAscending(array2, n))
-        cout << "The elements are in ascending order" << endl;
-    else cout << "The elements are NOT in ascending order" << endl;
+
+    // Merge sort
+    start = clock();
+    mergeSort(array3, 0, n - 1);
+    stop = clock();
+
+//    cout << "After sorting:  ";
+    //printArray(array2, n);
+
+    timeDifference = stop - start;
+    cout << endl << "Merge sort" << endl;
+    cout << "n = " << n << endl;
+    timeTaken = (double) timeDifference / CLOCKS_PER_SEC;
+    cout << "time taken " << timeTaken << endl;
+
+//    if (isAscending(array2, n))
+        //cout << "The elements are in ascending order" << endl;
+    //else cout << "The elements are NOT in ascending order" << endl;
 
     return 0;
 }
