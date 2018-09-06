@@ -109,6 +109,63 @@ void mergeSort(Edge A[], int p, int r) {
     }
 }
 
+// page 571
+void makeSet(Set sets[], int x) {
+    sets[x].p = x;
+    sets[x].rank = 0;
+}
+
+// page 571
+int findSet(Set sets[], int x) {
+    if (x != sets[x].p)
+        sets[x].p = findSet(sets, sets[x].p);
+    return sets[x].p;
+}
+
+// page 571
+void link(Set sets[], int x, int y) {
+    if (sets[x].rank > sets[y].rank)
+        sets[y].p = x;
+    else {
+        sets[x].p = y;
+        if (sets[x].rank == sets[y].rank)
+            sets[y].rank = sets[y].rank + 1;
+    }
+}
+
+// page 571
+void setUnion(Set sets[], int x, int y) {
+    link(sets, findSet(sets, x), findSet(sets, y));
+}
+
+// page 631
+Edge* MST_Kruskal(Graph g) {
+    Edge *A = new Edge[g.V - 1];
+    int edgeCounter = 0;
+
+    Set *sets = new Set[g.V];
+
+    // line 2-3
+    for (int v = 0; v < g.V; v++)
+        makeSet(sets, v);
+
+    // line 4
+    mergeSort(g.edges, 0, g.E - 1);
+
+    for (int e = 0; e < g.E; e++) {
+        int u = findSet(sets, g.edges[e].u);
+        int v = findSet(sets, g.edges[e].v);
+        if (u != v) {
+            A[edgeCounter++] = g.edges[e];
+            setUnion(sets, g.edges[e].u, g.edges[e].v);
+        }
+    }
+
+    delete sets;
+
+    return A;
+}
+
 int main() {
     Graph g(7, 10);
 
@@ -123,9 +180,20 @@ int main() {
     g.addEdge(5, 6, 6);
     g.addEdge(3, 6, 5);
 
-    mergeSort(g.edges, 0, g.E - 1);
+    Edge *mstEdges = MST_Kruskal(g);
 
-    g.print();
+    int mstCost = 0;
+
+    for (int e = 0; e < g.V - 1; e++) {
+        mstEdges[e].print();
+//        cout << mstEdges[e].w << endl;
+        mstCost += mstEdges[e].w;
+//        cout << mstCost << endl;
+//        cout << endl;
+    }
+
+    // Got to fix this one
+    cout << "MST Cost " << mstCost << endl;
 
     return 0;
 }

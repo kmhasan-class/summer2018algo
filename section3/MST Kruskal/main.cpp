@@ -1,6 +1,12 @@
 #include <iostream>
 using namespace std;
 
+class Set {
+public:
+    int p;
+    int rank;
+};
+
 class Edge {
 public:
     int u; // starting vertex
@@ -20,7 +26,7 @@ public:
     }
 
     void print() {
-        cout << "(" << u << ", " << v << ", " << w << ")" << endl;
+        cout << "(" << u + 1 << ", " << v + 1<< ", " << w << ")" << endl;
     }
 
     int compare(Edge *that) {
@@ -48,7 +54,7 @@ public:
     }
 
     void addEdge(int u, int v, int w) {
-        Edge e(u, v, w);
+        Edge e(u - 1, v - 1, w);
         edges[counter] = e;
         counter++;
     }
@@ -112,6 +118,62 @@ void mergeSort(Edge A[], int p, int r) {
     }
 }
 
+void makeSet(Set sets[], int x) {
+    sets[x].p = x;
+    sets[x].rank = 0;
+}
+
+int findSet(Set sets[], int x) {
+    if (x != sets[x].p)
+        sets[x].p = findSet(sets, sets[x].p);
+    return sets[x].p;
+}
+
+void link(Set sets[], int x, int y) {
+    if (sets[x].rank > sets[y].rank) {
+        sets[y].p = x;
+    } else {
+        sets[x].p = y;
+        if (sets[x].rank == sets[y].rank)
+            sets[y].rank = sets[y].rank + 1;
+    }
+}
+
+void setUnion(Set sets[], int x, int y) {
+    link(sets, findSet(sets, x), findSet(sets, y));
+}
+
+// page 631
+Edge* MST_Kruskal(Graph g) {
+    Edge* A = new Edge[g.V - 1];
+    int edgeCounter = 0;
+
+    Set* sets = new Set[g.V];
+
+    // line #2-3
+    for (int v = 0; v < g.V; v++)
+        makeSet(sets, v);
+
+    // line #4
+    mergeSort(g.edges, 0, g.E - 1);
+
+    for (int e = 0; e < g.E; e++) {
+        int u = findSet(sets, g.edges[e].u);
+        int v = findSet(sets, g.edges[e].v);
+
+        // line #6
+        if (u != v) {
+            // line #7
+            A[edgeCounter++] = g.edges[e];
+            setUnion(sets, g.edges[e].u, g.edges[e].v);
+        }
+    }
+
+    delete sets;
+
+    return A;
+}
+
 int main() {
     Graph g(7, 9);
 
@@ -125,16 +187,11 @@ int main() {
     g.addEdge(2, 6, 5);
     g.addEdge(1, 4, 4);
 
-    mergeSort(g.edges, 0, g.E - 1);
+    Edge* mstEdges = MST_Kruskal(g);
 
-    g.print();
-/*
-    double data[] = {32.33, 15, 68.12, 97.39, 12, 14, 35, 64, 12, 19, 24};
+    for (int e = 0; e < g.V - 1; e++)
+        mstEdges[e].print();
 
-    cout << "Before sorting "; printArray(data, 0, 10);
-    mergeSort(data, 0, 10);
-    cout << "After sorting  ";printArray(data, 0, 10);
-*/
     return 0;
 }
 
