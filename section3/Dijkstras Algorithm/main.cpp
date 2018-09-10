@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 using namespace std;
 
 const int INF = 1000000;
@@ -6,20 +7,29 @@ const int NIL = -1;
 
 class Vertex {
 public:
+    int v; // label/number/index
     int d; // distance
     int p; // parent
 
     Vertex() {
+        v = NIL;
         d = INF;
         p = NIL;
     }
 
-    Vertex(int distance, int parent) {
+    Vertex(int label, int distance, int parent) {
+        v = label;
         d = distance;
         p = parent;
     }
 
     void print() {
+        if (v == NIL)
+            cout << "NIL";
+        else cout << v + 1;
+
+        cout << ": ";
+
         if (d == INF)
             cout << "INF";
         else cout << d;
@@ -61,6 +71,10 @@ public:
     }
 };
 
+int compare(Vertex v1, Vertex v2) {
+    return v1.d - v2.d;
+}
+
 // Home Work: implement a MinHeap
 // implement extractMin
 class MinHeap {
@@ -74,6 +88,7 @@ public:
         length = n;
         for (int i = 0; i < n; i++)
             A[i] = data[i];
+        buildMinHeap();
     }
 
     MinHeap(int n) {
@@ -83,6 +98,14 @@ public:
 
     ~MinHeap() {
         delete A;
+    }
+
+    bool isEmpty() {
+        if (heapSize == 0)
+            return true;
+        else return false;
+
+        //return heapSize == 0;
     }
 
     void addData(Vertex data) {
@@ -119,15 +142,17 @@ public:
         // write a compare function
         // that compares two vertices
         // and use it in the following line
-        if (l < heapSize && A[l] < A[i])
+        //if (l < heapSize && A[l] < A[i])
+        if (l < heapSize && compare(A[l], A[i]) < 0)
             smallest = l;
         else smallest = i;
 
-        if (r < heapSize && A[r] < A[smallest])
+        //if (r < heapSize && A[r] < A[smallest])
+        if (r < heapSize && compare(A[r], A[smallest]) < 0)
             smallest = r;
 
         if (smallest != i) {
-            int temp = A[i];
+            Vertex temp = A[i];
             A[i] = A[smallest];
             A[smallest] = temp;
             minHeapify(smallest);
@@ -135,26 +160,26 @@ public:
 
     }
 
-    int extractMin() {
+    Vertex extractMin() {
         if (heapSize < 1) {
             cerr << "Heap underflow" << endl;
-            return -1;
+            return Vertex();
         }
 
-        int max = A[0];
+        Vertex min = A[0];
         A[0] = A[heapSize - 1];
 
         heapSize--;
 
         minHeapify(0);
 
-        return max;
+        return min;
     }
 
     void print() {
+        cout << "Heap contents:" << endl;
         for (int i = 0; i < heapSize; i++)
-            cout << A[i] << " ";
-        cout << endl;
+            A[i].print();
     }
 };
 
@@ -172,6 +197,8 @@ public:
         edgeCounter = 0;
         edges = new Edge[E];
         vertices = new Vertex[V];
+        for (int v = 0; v < V; v++)
+            vertices[v].v = v;
     }
 
     ~Graph() {
@@ -223,6 +250,35 @@ public:
         // line 3
         MinHeap Q(vertices, V);
 
+        Q.print();
+
+        // line 4
+        while (!Q.isEmpty()) {
+            // line 5
+            Vertex u = Q.extractMin();
+            // line 6
+            S[u.v] = true;
+
+            // horrible implementation follows
+            // refer to page 590 for a better
+            // representation
+
+            for (int e = 0; e < E; e++) {
+                int adjU = NIL;
+                if (edges[e].u == u.v) {
+                    adjU = edges[e].v;
+                } else if (edges[e].v == u.v) {
+                    adjU = edges[e].u;
+                }
+
+                if (adjU != NIL) {
+                    // call Relax (page 649)
+                    // also call heapDecreaseKey (page 164)
+                }
+            }
+
+        }
+
         delete S;
     }
 
@@ -241,39 +297,9 @@ int main() {
     g.addEdge(2, 6, 5);
     g.addEdge(3, 7, 9);
 
-    g.dijkstra(7);
+    g.dijkstra(5);
     g.print();
 
-    int data[] = {53, 13, 20, 67, 99};
-    int n = 5;
-    MinHeap h(data, n);
-    /*
-    MinHeap h(5);
-    h.addData(53);
-    h.addData(13);
-    h.addData(20);
-    h.addData(67);
-    h.addData(99);
-    */
-    h.buildMinHeap();
-    h.print();
-/*
-    int data[] = {5, 2, 1, 6, 34, 7, 2, 6, 19};
-    int n = 9;
-
-    MinHeap h(data, n);
-    h.print();
-    h.buildMinHeap();
-    h.print();
-
-    cout << h.extractMin() << endl;
-
-    h.print();
-
-    cout << h.extractMin() << endl;
-
-    h.print();
-*/
     return 0;
 }
 

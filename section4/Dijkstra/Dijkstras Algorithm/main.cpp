@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 using namespace std;
 
 class Edge {
@@ -29,20 +30,29 @@ const int NIL = -1;
 
 class Vertex {
 public:
+    int v; // the vertex number/index
     int d; // distance
     int p; // parent
 
     Vertex() {
+        v = NIL;
         d = INF;
         p = NIL;
     }
 
-    Vertex(int distance, int parent) {
+    Vertex(int index, int distance, int parent) {
+        v = index;
         d = distance;
         p = parent;
     }
 
     void print() {
+        if (v == NIL)
+            cout << "NIL";
+        else cout << v + 1;
+
+        cout << ": ";
+
         if (d == INF)
             cout << "INF";
         else cout << d;
@@ -54,6 +64,105 @@ public:
         else cout << p;
 
         cout << endl;
+    }
+};
+
+
+int compare(Vertex v1, Vertex v2) {
+    return v1.d - v2.d;
+}
+
+// Home Work: implement a MinHeap
+// implement extractMin
+class MinHeap {
+public:
+    Vertex *A;
+    int length;
+    int heapSize;
+
+    MinHeap(Vertex *data, int n) {
+        A = new Vertex[n];
+        length = n;
+        for (int i = 0; i < n; i++)
+            A[i] = data[i];
+        buildMinHeap();
+    }
+
+    ~MinHeap() {
+        delete A;
+    }
+
+    // page 157
+    void buildMinHeap() {
+        // line 1
+        heapSize = length;
+        for (int i = length / 2; i >= 0; i--)
+            minHeapify(i);
+    }
+
+    Vertex extractMin() {
+        if (heapSize < 1) {
+            cerr << "Heap underflow" << endl;
+            return Vertex();
+        }
+
+        Vertex min = A[0];
+        A[0] = A[heapSize - 1];
+        heapSize--;
+        minHeapify(0);
+        return min;
+    }
+
+    int parent(int i) {
+        return i / 2;
+    }
+
+    int left(int i) {
+        return 2 * i;
+    }
+
+    int right(int i) {
+        return 2 * i + 1;
+    }
+
+    bool isEmpty() {
+        if (heapSize == 0)
+            return true;
+        else return false;
+
+        //return heapSize == 0;
+    }
+
+    void minHeapify(int i) {
+        int l = left(i);
+        int r = right(i);
+
+        int smallest;
+
+        //if (l < heapSize && A[l] < A[i])
+        if (l < heapSize && compare(A[l], A[i]) < 0)
+            smallest = l;
+        else smallest = i;
+
+        //if (r < heapSize && A[r] < A[smallest])
+        if (r < heapSize && compare(A[r], A[smallest]) < 0)
+            smallest = r;
+
+        if (smallest != i) {
+            Vertex temp = A[i];
+            A[i] = A[smallest];
+            A[smallest] = temp;
+            minHeapify(smallest);
+        }
+
+    }
+
+    void print() {
+        cout << "Heap contents:" << endl;
+        for (int i = 0; i < heapSize; i++) {
+            cout << i + 1 << ": ";
+            A[i].print();
+        }
     }
 };
 
@@ -71,6 +180,8 @@ public:
         this->E = E;
         edges = new Edge[E];
         vertices = new Vertex[V];
+        for (int v = 0; v < V; v++)
+            vertices[v].v = v;
         counter = 0;
     }
 
@@ -88,7 +199,6 @@ public:
         cout << "Vertices " << V << endl;
 
         for (int i = 0; i < V; i++) {
-            cout << i + 1 << ": ";
             vertices[i].print();
         }
 
@@ -113,88 +223,45 @@ public:
     void dijkstra(int s) {
         // line 1
         initializeSingleSource(s - 1);
-    }
-};
 
+        // line 2
+        bool *S = new bool[V];
+        for (int v = 0; v < V; v++)
+            S[v] = false;
 
-// Home Work: implement a MinHeap
-// implement extractMin
-class MinHeap {
-public:
-    Vertex *A;
-    int length;
-    int heapSize;
+        MinHeap Q(vertices, V);
 
-    MinHeap(int *data, int n) {
-        A = new int[n];
-        length = n;
-        for (int i = 0; i < n; i++)
-            A[i] = data[i];
-    }
+        //Q.print();
 
-    ~MinHeap() {
-        delete A;
-    }
+        // line 4
+        while (!Q.isEmpty()) {
+            // line 5
+            Vertex u = Q.extractMin();
 
-    // page 157
-    void buildMinHeap() {
-        // line 1
-        heapSize = length;
-        for (int i = length / 2; i >= 0; i--)
-            minHeapify(i);
-    }
+            // line 6
+            S[u.v] = true;
 
-    int extractMin() {
-        if (heapSize < 1) {
-            cerr << "Heap underflow" << endl;
-            return -1;
+            // highly inefficient
+            for (int e = 0; e < E; e++) {
+                int adjU = NIL;
+                if (edges[e].u == u.v) {
+                    adjU = edges[e].v;
+                } else if (edges[e].v == u.v) {
+                    adjU = edges[e].u;
+                }
+
+                if (adjU != NIL) {
+                    cout << "Found adjacent!" << endl;
+                    vertices[adjU].print();
+                    exit(0);
+                    // call relax (page 649)
+                    // also implement one extra function
+                    // heapDecreaseKey (page 164)
+                }
+            }
         }
 
-        int min = A[0];
-        A[0] = A[heapSize - 1];
-        heapSize--;
-        minHeapify(0);
-        return min;
-    }
-
-    int parent(int i) {
-        return i / 2;
-    }
-
-    int left(int i) {
-        return 2 * i;
-    }
-
-    int right(int i) {
-        return 2 * i + 1;
-    }
-
-    void minHeapify(int i) {
-        int l = left(i);
-        int r = right(i);
-
-        int smallest;
-
-        if (l < heapSize && A[l] < A[i])
-            smallest = l;
-        else smallest = i;
-
-        if (r < heapSize && A[r] < A[smallest])
-            smallest = r;
-
-        if (smallest != i) {
-            int temp = A[i];
-            A[i] = A[smallest];
-            A[smallest] = temp;
-            minHeapify(smallest);
-        }
-
-    }
-
-    void print() {
-        for (int i = 0; i < heapSize; i++)
-            cout << A[i] << " ";
-        cout << endl;
+        delete S;
     }
 };
 
@@ -211,7 +278,7 @@ int main() {
     g.addEdge(2, 6, 5);
     g.addEdge(3, 7, 9);
 
-    g.dijkstra(1);
+    g.dijkstra(7);
     g.print();
 /*
     int data[] = {5, 2, 1, 6, 34, 7, 2, 6, 19};
