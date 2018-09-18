@@ -96,10 +96,6 @@ public:
         length = 0;
     }
 
-    ~MinHeap() {
-        delete A;
-    }
-
     bool isEmpty() {
         if (heapSize == 0)
             return true;
