@@ -85,10 +85,9 @@ public:
     int heapSize;
 
     MinHeap(Vertex *data, int n) {
-        A = new Vertex[n];
+        // major change from how it was implemented in class
+        A = data;
         length = n;
-        for (int i = 0; i < n; i++)
-            A[i] = data[i];
         buildMinHeap();
     }
 
